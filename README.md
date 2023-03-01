@@ -1,6 +1,6 @@
 # autorouter
 
-Automatic HTTP handlers for a router object with specific annotations
+Automatic HTTP handlers for a controller object with specific annotations.
 
 ## Assignments
 
