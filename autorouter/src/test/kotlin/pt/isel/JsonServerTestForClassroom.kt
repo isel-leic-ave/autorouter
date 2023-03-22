@@ -94,7 +94,7 @@ class JsonServerTestForClassroom {
     @MethodSource("makeJsonServer")
     fun insert_student_in_classroom(jsonServer: JsonServer) = runJsonServer(jsonServer) {
         val json = URL("http://localhost:4000/classroom/i42d/students/7777")
-            .put("""{"name":"Ze Gato","group":"11", "semester":"3"}""")
+            .put("""{"nr": "7777", "name":"Ze Gato","group":"11", "semester":"3"}""")
         val actual = mapper.readValue(json, Student::class.java)
         assertEquals(
             Student(7777, "Ze Gato", 11, 3),
