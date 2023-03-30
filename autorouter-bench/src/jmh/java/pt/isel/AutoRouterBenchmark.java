@@ -54,7 +54,7 @@ public class AutoRouterBenchmark {
         return addStudentHandler.handler().handle(
                 Map.of("classroom", "i42d", "nr", "7646775"),
                 Collections.emptyMap(),
-                Map.of("name", "Ze Gato", "group", "11","semester", "3")
+                Map.of("nr", "7646775", "name", "Ze Gato", "group", "11","semester", "3")
         );
     }
     @Benchmark
