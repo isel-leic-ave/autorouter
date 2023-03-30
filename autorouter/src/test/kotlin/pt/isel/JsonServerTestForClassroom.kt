@@ -8,7 +8,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import pt.isel.autorouter.*
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 import java.util.stream.Stream
 import kotlin.coroutines.resume
@@ -112,18 +116,15 @@ class JsonServerTestForClassroom {
             actual)
     }
 
-    fun URL.put(json: String): String = (this.openConnection() as HttpURLConnection).run {
-        requestMethod = "PUT"
-        doOutput = true
-        val out = json.toByteArray(StandardCharsets.UTF_8)
-        val length = out.size
-        setFixedLengthStreamingMode(length)
-        setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-        connect()
-        outputStream.use { os ->
-            os.write(out)
-            this.inputStream.bufferedReader().readText()
-        }
+    fun URL.put(json: String): String {
+        val client = HttpClient.newHttpClient()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(this.toString()))
+            .header("Content-Type", "application/json; charset=UTF-8")
+            .PUT(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
+            .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        return response.body()
     }
 
     fun URL.delete(): String = (this.openConnection() as HttpURLConnection).run {
