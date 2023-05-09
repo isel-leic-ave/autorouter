@@ -182,6 +182,19 @@ programmers express routes that return an infinite sequence.
 
 You should also modify the `JsonServer` to support this new kind of routes that
 should continuously write a new HTML paragraph for each `String` in a sequence.
+To that end, you may use he underlying Javalin `OutputStream` through a
+`PrintWriter`, such as:
+```kotlin
+Javalin.create().also {
+    it.get("/") { ctx ->
+        ctx.res().writer.use { writer ->
+            writer.println("....")
+            writer.flush()
+        }
+    }
+    it.start(300)
+}
+```
 
 Consider the response is never finished by the server, but only when the client
 terminates the connection.
