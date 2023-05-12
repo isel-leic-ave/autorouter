@@ -98,7 +98,7 @@ objects for each eligible method in given `controller` object parameter.
 
 <img src="dynamic-handlers-for-classroom-router.png">
 
-## Usage
+### Usage
 
 To run these benchmarks on you local machine just run:
 
@@ -117,3 +117,92 @@ java -jar autorouter-bench/build/libs/autorouter-bench-jmh.jar -i 4 -wi 4 -f 1 -
 * `-f`  1 fork
 * `-r`  2 run each iteration for 2 seconds
 * `-w`  2 run each warmup iteration for 2 seconds.
+
+## Assignment 3 - Lazy Sequences
+
+### Part 1 - `Path.watchNewFilesContent()`
+
+Build an extension function `Path.watchNewFilesContent():
+Sequence<Sequence<String>>` that registers a `WatchService` to given `Path` and
+returns an sequence with the content of new or modified files
+(i.e. each files's content is a `Sequence<String>`).
+
+To that end, you should first create a new `WatchService` by using the
+`newWatchService` method of the `FileSystem` class, as follows:
+```kotlin
+val service = path.fileSystem.newWatchService()
+```
+
+After that, you may register that path as a `Watchable` of the `WatchService` through:
+```kotlin
+path.register(service, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+```
+
+In former example we are registering for events that create, modify or delete an entry 
+in a directory. More details [here](https://docs.oracle.com/javase/tutorial/essential/io/notification.html#process)
+
+Next is an example of an event processing loop:
+```kotlin
+path.fileSystem.newWatchService().use { service ->
+    // Register the path to the service and watch for events
+    path.register(service, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+
+    // Start the infinite polling loop
+    while (true) {
+        val key = service.take()
+        // Dequeueing events
+        for (watchEvent in key.pollEvents()) {
+            // Get the type of the event
+            when(watchEvent.kind()) {
+                OVERFLOW -> continue  // loop
+                ENTRY_CREATE -> ...
+                ENTRY_MODIFY -> ...
+                ENTRY_DELETE -> ...
+            }
+        }
+        if (!key.reset()) {
+            break // loop
+        }
+    }
+}
+```
+
+### Part 2 - Testing
+
+You should develop a unit test that checks if the resulting sequence of 
+the `watchNewFilesContent` produces a new `Sequence<String>` with the content
+of new files.
+
+Your tests, should also confirm that making a concurrent change to the
+content of the new file after the File has been watched and before getting
+the first item from iterator is visible on the iteration.
+
+### Part 3 - JsonServer
+
+Make a proposal and modify the annotations API of the AutoRouter library to let
+programmers express routes that return an sequence.
+
+You should also modify the `JsonServer` to support this new kind of routes that
+should continuously write a new HTML paragraph for each `String` in a sequence.
+To that end, you may use the underlying Javalin `OutputStream` through a
+`PrintWriter`, such as:
+```kotlin
+Javalin.create().also {
+    it.get("/") { ctx ->
+        ctx.res().writer.use { writer ->
+            writer.println("....")
+            writer.flush()
+        }
+    }
+    it.start(300)
+}
+```
+
+Consider the response is never finished by the server, but only when the client
+terminates the connection.
+
+
+https://github.com/isel-leic-ave/autorouter/assets/578217/3c25c866-58c8-4dd1-80e4-3ac5fe332b22
+
+
+
