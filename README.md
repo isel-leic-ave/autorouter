@@ -200,3 +200,9 @@ Javalin.create().also {
 
 Consider the response is never finished by the server, but only when the client
 terminates the connection.
+
+
+https://github.com/isel-leic-ave/autorouter/assets/578217/3c25c866-58c8-4dd1-80e4-3ac5fe332b22
+
+
+
