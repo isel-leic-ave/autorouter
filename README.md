@@ -124,8 +124,8 @@ java -jar autorouter-bench/build/libs/autorouter-bench-jmh.jar -i 4 -wi 4 -f 1 -
 
 Build an extension function `Path.watchNewFilesContent():
 Sequence<Sequence<String>>` that registers a `WatchService` to given `Path` and
-returns an infinite sequence with the content of new files (i.e. each files's
-content is a `Sequence<String>`).
+returns an infinite sequence with the content of new or modified files
+(i.e. each files's content is a `Sequence<String>`).
 
 To that end, you should first create a new `WatchService` by using the
 `newWatchService` method of the `FileSystem` class, as follows:
@@ -170,10 +170,12 @@ path.fileSystem.newWatchService().use { service ->
 ### Part 2 - Testing
 
 You should develop a unit test that checks if the resulting sequence of 
-the `watchNewFilesContent` produces a new item on file creation.
+the `watchNewFilesContent` produces a new `Sequence<String>` with the content
+of new files.
 
 Your tests, should also confirm that making a concurrent change to the
-content of the new file is visible while iterating the `Sequence<String>`.
+content of the new file after the File has been watched and before getting
+the first item from iterator is visible on the iteration.
 
 ### Part 3 - JsonServer
 
@@ -182,7 +184,7 @@ programmers express routes that return an infinite sequence.
 
 You should also modify the `JsonServer` to support this new kind of routes that
 should continuously write a new HTML paragraph for each `String` in a sequence.
-To that end, you may use he underlying Javalin `OutputStream` through a
+To that end, you may use the underlying Javalin `OutputStream` through a
 `PrintWriter`, such as:
 ```kotlin
 Javalin.create().also {
