@@ -124,7 +124,7 @@ java -jar autorouter-bench/build/libs/autorouter-bench-jmh.jar -i 4 -wi 4 -f 1 -
 
 Build an extension function `Path.watchNewFilesContent():
 Sequence<Sequence<String>>` that registers a `WatchService` to given `Path` and
-returns an infinite sequence with the content of new or modified files
+returns an sequence with the content of new or modified files
 (i.e. each files's content is a `Sequence<String>`).
 
 To that end, you should first create a new `WatchService` by using the
@@ -180,7 +180,7 @@ the first item from iterator is visible on the iteration.
 ### Part 3 - JsonServer
 
 Make a proposal and modify the annotations API of the AutoRouter library to let
-programmers express routes that return an infinite sequence.
+programmers express routes that return an sequence.
 
 You should also modify the `JsonServer` to support this new kind of routes that
 should continuously write a new HTML paragraph for each `String` in a sequence.
